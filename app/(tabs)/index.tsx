@@ -127,7 +127,6 @@ export default function App() {
         </View>
       </View>
 
-      <ActivityIndicator />
       <Text>HUM : {dht?.hum}</Text>
       <Text>TEM : {dht?.tem}</Text>
     </View>
