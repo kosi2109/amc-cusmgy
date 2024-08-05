@@ -178,7 +178,7 @@ export default function App() {
             <View>
               <Text style={{ fontSize: 12, fontWeight: 600 }}>Water Level</Text>
               <Text style={{ fontSize: 45, fontWeight: 700 }}>
-                {dht?.water_level} CM
+                {dht?.water_level ?? 0} CM
               </Text>
             </View>
             <View
