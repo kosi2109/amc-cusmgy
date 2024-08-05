@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "firebase",
-    "slug": "firebase",
+    "slug": "amcs-ucsmgy",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -31,6 +31,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "95bb5bf2-6049-4353-9847-c5323b2e8654"
+      }
+    },
+    "owner": "kosi2109"
   }
 }
