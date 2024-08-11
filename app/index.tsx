@@ -29,6 +29,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import { LineChart } from "react-native-chart-kit";
 
 interface TP {
   fan: boolean;
@@ -42,10 +43,13 @@ interface TP {
   water_level: number;
 }
 
-const { width: screenWidth } = Dimensions.get("window");
-
 export default function App() {
   const [dht, setDht] = useState<TP | null>(null);
+  const [temps, setTemps] = useState([30, 30, 30, 30, 30, 30, 30, 30, 30, 30]);
+  const [hums, setHums] = useState([50, 50, 50, 50, 50, 50, 50, 50, 50, 50]);
+  const [waterlevels, setWaterlevels] = useState([
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  ]);
 
   const getList = () => {
     const starCountRef = ref(db, "DHT");
@@ -64,14 +68,53 @@ export default function App() {
     set(ref(db, "DHT/" + path), val);
   };
 
+  const screenWidth = Dimensions.get("window").width;
+
+  useEffect(() => {
+    if (dht?.tem) {
+      setTemps((pre) => [...pre, dht?.tem].slice(-10) as any);
+    }
+  }, [dht?.tem]);
+
+  useEffect(() => {
+    if (dht?.hum) {
+      setHums((pre) => [...pre, dht?.hum].slice(-10) as any);
+    }
+  }, [dht?.hum]);
+
+  useEffect(() => {
+    if (dht?.water_level) {
+      setWaterlevels((pre) => [...pre, dht?.water_level].slice(-10) as any);
+    }
+  }, [dht?.water_level]);
+
+  // Data for the three lines (temperature, humidity, water level)
+  const data = {
+    labels: [""], // Only one value
+    datasets: [
+      {
+        data: temps, // Temperature
+        color: (opacity = 0.1) => `rgba(29, 180, 132, ${opacity})`, // #1db484 (Temperature)
+        strokeWidth: 3,
+      },
+      {
+        data: hums, // Humidity
+        color: (opacity = 1) => `rgba(3, 165, 252, ${opacity})`, // #03a5fc (Humidity)
+        strokeWidth: 3,
+      },
+      {
+        data: waterlevels, // Water level
+        color: (opacity = 1) => `rgba(3, 19, 252, ${opacity})`, // #0313fc (Water Level)
+        strokeWidth: 3,
+      },
+    ],
+    legend: ["Temperature", "Humidity", "Water Level"], // Optional
+  };
+
   return (
     <LinearGradient
       // Background Linear Gradient
       style={{
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
         flex: 1,
       }}
       colors={["#2980B9", "#6DD5FA", "#FFFFFF"]}
@@ -80,7 +123,7 @@ export default function App() {
       locations={[0, 0.5, 1]}
     >
       <ScrollView style={styles.container}>
-        <View style={{ paddingHorizontal: 10 }}>
+        <View style={{ paddingHorizontal: 10, flex: 1 }}>
           <Text
             style={{
               fontSize: 25,
@@ -194,6 +237,39 @@ export default function App() {
                 zIndex: -1,
               }}
             ></View>
+          </View>
+
+          <View style={[styles.card, { padding: 0 }]}>
+            {dht && (
+              <LineChart
+                data={data}
+                width={screenWidth - 20}
+                height={220}
+                chartConfig={{
+                  backgroundColor: "transparent",
+                  backgroundGradientFrom: "#fff",
+                  backgroundGradientTo: "#fff",
+                  decimalPlaces: 2,
+                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  propsForDots: {
+                    r: "0",
+                    strokeWidth: "0",
+                    stroke: "#ffa726",
+                  },
+                  propsForBackgroundLines: {
+                    strokeDasharray: "", // Remove dashed lines
+                    stroke: "transparent", // Make grid lines transparent
+                  },
+                  fillShadowGradient: "#ffffff", // this removes the gray shadow under the line
+                  fillShadowGradientOpacity: -100,
+                  fillShadowGradientFromOffset: 0,
+                  fillShadowGradientFrom: "#fff",
+                  fillShadowGradientTo: "#fff",
+                }}
+                bezier={false}
+              />
+            )}
           </View>
 
           <View style={styles.card}>
