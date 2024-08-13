@@ -34,6 +34,7 @@ import { LineChart } from "react-native-chart-kit";
 interface TP {
   fan: boolean;
   is_auto: boolean;
+  esp_wifi: boolean;
   light: boolean;
   mist: boolean;
   pump: boolean;
@@ -137,6 +138,31 @@ export default function App() {
           >
             Advanced Mushroom Cultivation System
           </Text>
+          <View
+            style={{
+              display: "flex",
+              alignItems: "flex-end",
+              marginBottom: 10,
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: dht?.esp_wifi ? "#00A300" : "#FF0000",
+                paddingHorizontal: 20,
+                paddingVertical: 8,
+                width: 100,
+                justifyContent: "center",
+                display: "flex",
+                alignItems: "center",
+                borderRadius: 10,
+              }}
+            >
+              <Text style={{ color: "#fafafa", fontWeight: "700" }}>
+                {dht?.esp_wifi ? "Online" : "Offline"}
+              </Text>
+            </View>
+          </View>
+
           <View style={styles.cardFixed}>
             <View
               style={{
@@ -272,7 +298,7 @@ export default function App() {
             )}
           </View>
 
-          <View style={styles.card}>
+          <View style={[styles.card, { marginBottom: 30 }]}>
             <Text style={{ fontSize: 20, fontWeight: 600, marginBottom: 10 }}>
               Mode
             </Text>
@@ -453,7 +479,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 48,
-    marginBottom: 10,
   },
   togglerText: {
     fontSize: 15,
