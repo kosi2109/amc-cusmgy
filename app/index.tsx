@@ -46,10 +46,10 @@ interface TP {
 
 export default function App() {
   const [dht, setDht] = useState<TP | null>(null);
-  const [temps, setTemps] = useState([30, 30, 30, 30, 30, 30, 30, 30, 30, 30]);
-  const [hums, setHums] = useState([50, 50, 50, 50, 50, 50, 50, 50, 50, 50]);
+  const [temps, setTemps] = useState([25, 25, 25, 25, 25, 25, 25, 25, 25, 25]);
+  const [hums, setHums] = useState([80, 80, 80, 80, 80, 80, 80, 80, 80, 80]);
   const [waterlevels, setWaterlevels] = useState([
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
   ]);
 
   const getList = () => {
@@ -73,12 +73,35 @@ export default function App() {
 
   useEffect(() => {
     if (dht?.tem) {
-      setTemps((pre) => [...pre, dht?.tem].slice(-10) as any);
+      let newData = dht?.tem;
+
+      // if hum is over 28 set 28
+      if (newData > 28) {
+        newData = 28;
+      }
+
+      // if hum is under 25 set 25
+      if (newData < 25) {
+        newData = 25;
+      }
+      setTemps((pre) => [...pre, newData].slice(-10) as any);
     }
   }, [dht?.tem]);
 
   useEffect(() => {
     if (dht?.hum) {
+      let newData = dht?.hum;
+
+      // if hum is over 95 set 95
+      if (newData > 95) {
+        newData = 95;
+      }
+
+      // if hum is under 80 set 80
+      if (newData < 80) {
+        newData = 80;
+      }
+
       setHums((pre) => [...pre, dht?.hum].slice(-10) as any);
     }
   }, [dht?.hum]);
@@ -95,7 +118,7 @@ export default function App() {
     datasets: [
       {
         data: temps, // Temperature
-        color: (opacity = 0.1) => `rgba(29, 180, 132, ${opacity})`, // #1db484 (Temperature)
+        color: (opacity = 0.1) => `rgba(255, 0, 0, ${opacity})`, // #FF0000 (Temperature)
         strokeWidth: 3,
       },
       {
@@ -174,7 +197,7 @@ export default function App() {
                 alignItems: "center",
               }}
             >
-              <FontAwesome6 name="temperature-half" size={50} color="#1db484" />
+              <FontAwesome6 name="temperature-half" size={50} color="#ff0000" />
             </View>
             <View>
               <Text style={{ fontSize: 12, fontWeight: 600 }}>Temperature</Text>
@@ -188,7 +211,7 @@ export default function App() {
                 width: 100,
                 height: 100,
                 borderRadius: 350,
-                borderColor: "#1db484",
+                borderColor: "#ff0000",
                 borderWidth: 5,
                 top: -30,
                 right: -40,
