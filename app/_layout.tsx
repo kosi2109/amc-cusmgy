@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { View } from "react-native-reanimated/lib/typescript/Animated";
+import { Text } from "react-native";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,7 +35,19 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={DefaultTheme}>
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="index"
+          options={{ headerShown: false, headerTitle: "Home" }}
+        />
+        <Stack.Screen
+          name="graph"
+          options={{
+            headerBackTitle: "Back",
+            headerTitle: "Graph",
+            headerStyle: { backgroundColor: "#2980B9" },
+            headerTintColor: "#fafafa",
+          }}
+        />
         <Stack.Screen name="+not-found" />
       </Stack>
     </ThemeProvider>

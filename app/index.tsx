@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Dimensions,
   ScrollView,
+  Pressable,
 } from "react-native";
 import {
   getDatabase,
@@ -30,6 +31,7 @@ import {
 } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { LineChart } from "react-native-chart-kit";
+import { useNavigation, useRouter } from "expo-router";
 
 interface TP {
   fan: boolean;
@@ -46,11 +48,6 @@ interface TP {
 
 export default function App() {
   const [dht, setDht] = useState<TP | null>(null);
-  const [temps, setTemps] = useState([25, 25, 25, 25, 25, 25, 25, 25, 25, 25]);
-  const [hums, setHums] = useState([80, 80, 80, 80, 80, 80, 80, 80, 80, 80]);
-  const [waterlevels, setWaterlevels] = useState([
-    50, 50, 50, 50, 50, 50, 50, 50, 50, 50,
-  ]);
 
   const getList = () => {
     const starCountRef = ref(db, "DHT");
@@ -69,71 +66,7 @@ export default function App() {
     set(ref(db, "DHT/" + path), val);
   };
 
-  const screenWidth = Dimensions.get("window").width;
-
-  useEffect(() => {
-    if (dht?.tem) {
-      let newData = dht?.tem;
-
-      // if hum is over 28 set 28
-      if (newData > 28) {
-        newData = 28;
-      }
-
-      // if hum is under 25 set 25
-      if (newData < 25) {
-        newData = 25;
-      }
-      setTemps((pre) => [...pre, newData].slice(-10) as any);
-    }
-  }, [dht?.tem]);
-
-  useEffect(() => {
-    if (dht?.hum) {
-      let newData = dht?.hum;
-
-      // if hum is over 95 set 95
-      if (newData > 95) {
-        newData = 95;
-      }
-
-      // if hum is under 80 set 80
-      if (newData < 80) {
-        newData = 80;
-      }
-
-      setHums((pre) => [...pre, dht?.hum].slice(-10) as any);
-    }
-  }, [dht?.hum]);
-
-  useEffect(() => {
-    if (dht?.water_level) {
-      setWaterlevels((pre) => [...pre, dht?.water_level].slice(-10) as any);
-    }
-  }, [dht?.water_level]);
-
-  // Data for the three lines (temperature, humidity, water level)
-  const data = {
-    labels: [""], // Only one value
-    datasets: [
-      {
-        data: temps, // Temperature
-        color: (opacity = 0.1) => `rgba(255, 0, 0, ${opacity})`, // #FF0000 (Temperature)
-        strokeWidth: 3,
-      },
-      {
-        data: hums, // Humidity
-        color: (opacity = 1) => `rgba(3, 165, 252, ${opacity})`, // #03a5fc (Humidity)
-        strokeWidth: 3,
-      },
-      {
-        data: waterlevels, // Water level
-        color: (opacity = 1) => `rgba(3, 19, 252, ${opacity})`, // #0313fc (Water Level)
-        strokeWidth: 3,
-      },
-    ],
-    legend: ["Temperature", "Humidity", "Water Level"], // Optional
-  };
+  const nav = useRouter();
 
   return (
     <LinearGradient
@@ -186,7 +119,10 @@ export default function App() {
             </View>
           </View>
 
-          <View style={styles.cardFixed}>
+          <Pressable
+            onPress={() => nav.push("/graph")}
+            style={styles.cardFixed}
+          >
             <View
               style={{
                 display: "flex",
@@ -218,9 +154,12 @@ export default function App() {
                 zIndex: -1,
               }}
             ></View>
-          </View>
+          </Pressable>
 
-          <View style={styles.cardFixed}>
+          <Pressable
+            onPress={() => nav.push("/graph")}
+            style={styles.cardFixed}
+          >
             <View
               style={{
                 display: "flex",
@@ -252,9 +191,12 @@ export default function App() {
                 zIndex: -1,
               }}
             ></View>
-          </View>
+          </Pressable>
 
-          <View style={styles.cardFixed}>
+          <Pressable
+            onPress={() => nav.push("/graph")}
+            style={styles.cardFixed}
+          >
             <View
               style={{
                 display: "flex",
@@ -286,40 +228,7 @@ export default function App() {
                 zIndex: -1,
               }}
             ></View>
-          </View>
-
-          <View style={[styles.card, { padding: 0 }]}>
-            {dht && (
-              <LineChart
-                data={data}
-                width={screenWidth - 20}
-                height={220}
-                chartConfig={{
-                  backgroundColor: "transparent",
-                  backgroundGradientFrom: "#fff",
-                  backgroundGradientTo: "#fff",
-                  decimalPlaces: 2,
-                  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-                  propsForDots: {
-                    r: "0",
-                    strokeWidth: "0",
-                    stroke: "#ffa726",
-                  },
-                  propsForBackgroundLines: {
-                    strokeDasharray: "", // Remove dashed lines
-                    stroke: "transparent", // Make grid lines transparent
-                  },
-                  fillShadowGradient: "#ffffff", // this removes the gray shadow under the line
-                  fillShadowGradientOpacity: -100,
-                  fillShadowGradientFromOffset: 0,
-                  fillShadowGradientFrom: "#fff",
-                  fillShadowGradientTo: "#fff",
-                }}
-                bezier={false}
-              />
-            )}
-          </View>
+          </Pressable>
 
           <View style={[styles.card, { marginBottom: 30 }]}>
             <Text style={{ fontSize: 20, fontWeight: 600, marginBottom: 10 }}>
